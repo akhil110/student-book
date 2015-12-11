@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html ng-app="StudentBook">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title>Student book</title>
+
+    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+    
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+    <script src="lib/lovefield.min.js"></script>
+
+    <script src="js/app.js"></script>
+    <script src="js/student-service.js"></script>
+  </head>
+  <body>
+      
+      <ion-nav-view></ion-nav-view>
+      
+      <script id="menu.html" type="text/ng-template">
+    
+	
+        <ion-side-menus>
+
+            <ion-side-menu-content>
+
+                <ion-nav-bar class="bar-positive">
+                    <ion-nav-back-button>
+                    </ion-nav-back-button>
+                    <ion-nav-buttons side="left">
+                        <button class="button button-icon button-clear ion-navicon" menu-toggle="left"></button>
+                    </ion-nav-buttons>
+
+                </ion-nav-bar>
+                <ion-nav-view name="menuContent" animation="slide-left-right"></ion-nav-view>
+
+            </ion-side-menu-content>
+
+            <ion-side-menu side="left">
+                <ion-header-bar class="bar-positive">
+                    <h1 class="title">Menu</h1>
+                </ion-header-bar>
+
+                <ion-content>
+
+                    <ion-list>
+                        <ion-item menu-close href="#/appURL/list-student">
+                            <i class="ion-person-stalker"></i> List Students
+                        </ion-item>
+                        <ion-item menu-close href="#/appURL/add-student">
+                            <i class="ion-person-add"></i> Add Student
+                        </ion-item>
+                        <ion-item menu-close href="#/appURL/list-class">
+                            <i class="ion-easel"></i> List Class
+                        </ion-item>
+
+                    </ion-list>
+
+                </ion-content>
+
+            </ion-side-menu>
+
+        </ion-side-menus>
+    </script>
+
+    <script id="list-student.html" type="text/ng-template">
+
+        <ion-view cache-view="false" title="List Students">
+
+            <ion-content>
+
+                <div class="item item-input-inset">
+                    <label class="item-input-wrapper">
+                        <input type="text" placeholder="Seach Student" maxlength="50" ng-model="searchStudent.student_name">
+                    </label>
+                </div>
+
+                <ion-list>
+                    <ion-item href="#/appURL/student-detail/{{ s.student_id }}" ng-repeat="s in students | filter:searchStudent" item="s">
+                        <p>{{ s.student_name }}</p>
+
+                        <h6 class="positive">{{ s.student_class }}</h6>
+
+                        <ion-option-button class="icon-left ion-edit button-positive" ng-click="editStudent(s.student_id)">
+                            Edit
+                        </ion-option-button>
+                        <ion-option-button class="icon-left ion-trash-a button-assertive" ng-click="delStudent(s.student_id)">
+                            Delete
+                        </ion-option-button>
+                    </ion-item>
+
+                    
+                </ion-list>
+            </ion-content>
+        </ion-view>
+    </script>
+
+    <script id="add-student.html" type="text/ng-template">
+
+        <ion-view cache-view="false" title="{{ action }} Student">
+
+            <ion-content>
+                <form ng-submit="saveStudent(student)">
+
+                    <div class="list list-inset">
+                        <label class="item item-input">
+                            <span class="input-label">Student Name</span>
+                            <input type="text" placeholder="Enter student name" maxlength="150" ng-model="student.name">
+                        </label>
+
+                        <label class="item item-input item-select">
+                            <span class="input-label">Student Class</span>
+
+                            <select ng-model="student.class">
+                                <option value="" ng-selected="student.class==''">Select</option>
+                                <option value="Maths" ng-selected="student.class=='Maths'">Maths</option>
+                                <option value="Physics" ng-selected="student.class=='Physics'">Physics</option>
+                                <option value="Chemistry" ng-selected="student.class=='Chemistry'">Chemistry</option>
+                                <option value="Biology" ng-selected="student.class=='Biology'">Biology</option>
+                                <option value="English" ng-selected="student.class=='English'">English</option>
+
+                            </select>
+                        </label>
+
+                        <ion-radio ng-value="'Male'" ng-model="student.sex">Male</ion-radio>
+                        <ion-radio ng-value="'Female'" ng-model="student.sex">Female</ion-radio>
+
+                        <label class="item item-input">
+                            <span class="input-label">Stuent Phone</span>
+                            <input type="text" placeholder="Enter student phone" maxlength="150" ng-model="student.phone">
+                        </label>
+
+                        <label class="item item-input item-floating-label">
+                            <span class="input-label">Address</span>
+                            <textarea placeholder="Enter address" maxlength="500" rows="4" cols="10" ng-model="student.address"></textarea>
+                        </label>
+
+                        <button type="submit" class="button button-block button-positive">{{ btnaction }}</button>
+                    </div>
+                </form>
+            </ion-content>
+        </ion-view>
+    </script>
+
+    <script id="list-class.html" type="text/ng-template">
+
+        <ion-view cache-view="false" title="List Class">
+
+            <ion-content>
+                <div ng-repeat="studentPerClass in studentsToFilter() | filter:filterClass">
+                    <div class="list" ng-init="filter_len = (students | filter:{student_class: studentPerClass.student_class}).length">
+                        <span class="item item-divider">
+                            {{studentPerClass.student_class}}
+                            <span class="badge badge-energized">{{filter_len}}</span>
+                        </span>
+                        <a class="item" ng-repeat="s in students | filter:{student_class: studentPerClass.student_class}" href="#/appURL/student-detail/{{s.student_id}}">{{s.student_name}}</a>
+                    </div>
+                </div>
+                
+            </ion-content>
+        </ion-view>
+    </script>
+
+    <script id="student-detail.html" type="text/ng-template">
+
+        <ion-view cache-view="false" title="Student Details">
+
+            <ion-content>
+
+                <div class="list" ng-repeat="s in student">
+
+                    <div class="item item-divider">Student Name</div>
+                    <a class="item">{{s.student_name}}</a>
+
+                    <div class="item item-divider">Student Class</div>
+                    <a class="item">{{s.student_class}}</a>      
+
+                    <div class="item item-divider">Student Sex</div>
+                    <a class="item">{{s.student_sex}}</a>
+
+                    <div class="item item-divider">Student Phone</div>
+                    <a class="item">{{s.student_phone}}</a>
+
+                    <div class="item item-divider">Student Address</div>
+                    <a class="item">{{s.student_address}}</a>
+
+                </div>
+            </ion-content>
+        </ion-view>
+    </script>
+
+    
+  </body>
+</html>
