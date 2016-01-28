@@ -9,7 +9,7 @@ angular.module('StudentBook', ['ionic', 'studentServ'])
                 templateUrl: "menu.html"
             })
 			
-			.state('appmenu.list-student', {
+	    .state('appmenu.list-student', {
                 url: "/list-student",
                 views: {
                     'menuContent' :{
@@ -53,7 +53,7 @@ angular.module('StudentBook', ['ionic', 'studentServ'])
                 views: {
                     'menuContent' :{
                         templateUrl: "list-class.html",
-						controller: "ListClassCtrl"
+			controller: "ListClassCtrl"
                     }
                 }
             })
@@ -63,10 +63,10 @@ angular.module('StudentBook', ['ionic', 'studentServ'])
 
     .controller('ListStudentCtrl', ['$scope', '$state', '$ionicPopup', '$ionicActionSheet', 'DBService', function($scope, $state, $ionicPopup, $ionicActionSheet, DBService) {
 		
-		$scope.loadStudent = function() {
-			DBService.getStudent().then(function (results) {
-				$scope.students = results;
-            });
+	$scope.loadStudent = function() {
+		DBService.getStudent().then(function (results) {
+			$scope.students = results;
+            	});
         }
         
         DBService.setupDB().then(function () {
@@ -102,9 +102,9 @@ angular.module('StudentBook', ['ionic', 'studentServ'])
 
     .controller('StudentDetailCtrl', ['$scope', '$state', '$stateParams', 'DBService', function($scope, $state, $stateParams, DBService) {
 		
-		DBService.getStudentById($stateParams.studentId).then(function (result) {
-			$scope.student = result;
-		});
+	DBService.getStudentById($stateParams.studentId).then(function (result) {
+		$scope.student = result;
+	});
         
     }])
 
@@ -117,19 +117,19 @@ angular.module('StudentBook', ['ionic', 'studentServ'])
         }else{
             $scope.action = 'Edit';
             $scope.btnaction = 'Update';
-			$scope.student = {};
+	$scope.student = {};
 			
             DBService.getStudentById($stateParams.studentId).then(function (results) {
-				$scope.student.name = results[0].student_name;
+		$scope.student.name = results[0].student_name;
                 $scope.student.class = results[0].student_class;
                 $scope.student.sex = results[0].student_sex;
-				$scope.student.phone = results[0].student_phone;
-				$scope.student.address = results[0].student_address;
+		$scope.student.phone = results[0].student_phone;
+		$scope.student.address = results[0].student_address;
             });
         }
 
         $scope.saveStudent = function(student){
-			if(student === undefined || student.name === null || student.name === ""){
+	    if(student === undefined || student.name === null || student.name === ""){
                 $ionicPopup.alert({
                     title: 'Error - Input Required',
                     template: 'Please enter student name.'
