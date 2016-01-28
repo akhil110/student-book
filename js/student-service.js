@@ -2,35 +2,35 @@ angular.module('studentServ', [])
 
     .factory("DBService", function ($q, $ionicPopup, $state) {
         
-		var Sdb, tblStudent = null;
+	var Sdb, tblStudent = null;
 
         function setupDB() {	
-			var deferred = $q.defer();
-			var schemaBuilder = lf.schema.create('studentsDB', 1);
+		var deferred = $q.defer();
+		var schemaBuilder = lf.schema.create('studentsDB', 1);
+		
+		schemaBuilder.createTable('Student').
+			addColumn('student_id', lf.Type.INTEGER).
+			addColumn('student_name', lf.Type.STRING).
+			addColumn('student_class', lf.Type.STRING).
+			addColumn('student_sex', lf.Type.STRING).
+			addColumn('student_phone', lf.Type.STRING).
+			addColumn('student_address', lf.Type.STRING).
+			addNullable(['student_phone', 'student_address']).
+			addPrimaryKey(['student_id'], true);
 			
-			schemaBuilder.createTable('Student').
-				addColumn('student_id', lf.Type.INTEGER).
-				addColumn('student_name', lf.Type.STRING).
-				addColumn('student_class', lf.Type.STRING).
-				addColumn('student_sex', lf.Type.STRING).
-				addColumn('student_phone', lf.Type.STRING).
-				addColumn('student_address', lf.Type.STRING).
-				addNullable(['student_phone', 'student_address']).
-				addPrimaryKey(['student_id'], true);
-				
-			schemaBuilder.connect().then(function(db) {
-				Sdb = db;
-				tblStudent = Sdb.getSchema().table('Student');
-				deferred.resolve(); 
-			});
+		schemaBuilder.connect().then(function(db) {
+			Sdb = db;
+			tblStudent = Sdb.getSchema().table('Student');
+			deferred.resolve(); 
+		});
 			
-			return deferred.promise; 
+		return deferred.promise; 
         }
 
         function getStudent(){
-			var deferred = $q.defer();
+		var deferred = $q.defer();
 			
-            var qry1 = Sdb.
+            	var qry1 = Sdb.
                 select().
                 from(tblStudent).
                 orderBy(tblStudent.student_name);
@@ -49,8 +49,8 @@ angular.module('studentServ', [])
                 });
 			
 			
-			return deferred.promise;
-		}
+		return deferred.promise;
+	}
 
         function getStudentById(studentId){
             var deferred = $q.defer();
@@ -68,8 +68,8 @@ angular.module('studentServ', [])
 
         function saveStudent(student){
             
-			var s = angular.copy(student);
-			var deferred = $q.defer();
+		var s = angular.copy(student);
+		var deferred = $q.defer();
 			
             var row = tblStudent.createRow({
                 'student_name': s.name,
@@ -98,7 +98,7 @@ angular.module('studentServ', [])
         }
 
         function delStudent(studentId){
-			var deferred = $q.defer();
+	    var deferred = $q.defer();
 			
             var qry1 = Sdb.
                 delete().
@@ -113,7 +113,7 @@ angular.module('studentServ', [])
 
         function updateStudent(student, studentId){
          
-			var s = angular.copy(student);
+	    var s = angular.copy(student);
             var deferred = $q.defer();
 			
             var qry1 = Sdb.
